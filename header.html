@@ -1,0 +1,261 @@
+<?php
+session_start();
+
+$user_id="";
+if(isset($_SESSION['ind'])){
+  
+$user_id =$_SESSION['ind'];
+}
+
+$full_name=$_SESSION['full_name'];
+
+?>
+<!DOCTYPE html>
+<html lang="en">
+    <?php
+require_once 'follow.php';
+require_once 'validation.php';
+require_once 'paginator.php';
+$validation = new Validation();
+            
+$contact = new Follow();
+
+?>
+    <head>
+        <title>ADIKA WEB SMS PORTAL
+        </title>
+        <meta charset="UTF-8"/>
+        <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+        <link href="css/bootstrap.min.css" rel="stylesheet"/>
+        <link href="css/jquery.gritter.css" rel="stylesheet"/>
+        <link href="css/bootstrap-responsive.min.css" rel="stylesheet"/>
+        <link href="css/colorpicker.css" rel="stylesheet"/>
+        <link href="css/datepicker.css" rel="stylesheet"/>
+        <link href="css/uniform.css" rel="stylesheet"/>
+        <link href="css/select2.css" rel="stylesheet"/>
+        <link href="css/matrix-style.css" rel="stylesheet"/>
+        <link href="css/fullcalendar.css" rel="stylesheet"/>
+        <link href="css/matrix-media.css" rel="stylesheet"/>
+        <link href="css/bootstrap-wysihtml5.css" rel="stylesheet"/>
+        <link href="font-awesome/css/font-awesome.css" rel="stylesheet"/>
+        <link href="css/card.css" rel="stylesheet"/>
+        <link href="assets/logo/adikataxi.png" rel="icon" type="image/icon type">
+
+        <style>
+            table .a {
+                display: none;
+            }
+            table tr:hover .a {
+                display: inline;
+            }
+        </style>
+        <body>
+
+            <!-- Copyright Yeneget  -part-->
+            <div id="">
+            <?php           
+   if (!$validation->logged_in()) {
+                 header("location:signin.php");
+                exit();
+              }else{
+  ?>
+                <div class="img " style="margin-left:10px;width:200px;height:75px;margin-top:10px;">
+                    <img class="img-circle" src="assets/logo/adikataxi.png" style="margin-left:5px;width:80px;height:76px;"/>
+                </div>
+            <?php
+ }
+    ?>
+        
+    
+    
+    <div class="navbar-inverse" style="background-color:rgb(50, 52, 53)" id="user-nav">
+<ul class="nav">
+    <li class="dropdown-item" id="profile-messages">
+        <a class="dropdown-toggle" data-target="#profile-messages" data-toggle="dropdown" href="#" title="">
+            <i class="icon icon-user"></i>
+            <span class="text" title="">Welcome
+                <?php echo $full_name; ?>
+            </span>
+            <b class="caret"></b>
+        </a>
+        <ul class="dropdown-menu">
+            <li>
+                <a href="#">
+                    <i class="icon-user"></i>
+                    My Profile</a>
+            </li>
+            <li class="divider"></li>
+            <li>
+                <a href="change_pass.php">
+                    <i class="icon-key"></i>
+                    Change Password</a>
+            </li>
+            <li class="divider"></li>
+            <!-- <li><a href="task.php"><i class="icon-check"></i> My Tasks</a></li>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  <li class="divider"></li> -->
+            <li>
+                <a href="../auth/logout.php">
+                    <i class="icon-signout"></i>
+                    Log Out</a>
+            </li>
+        </ul>
+    </li>
+
+    <li class="dropdown-item">
+        <a href="auth/logout.php" title="">
+            <i class="icon icon-share-alt"></i>
+            <span class="text">Logout</span>
+        </a>
+    </li>
+</ul></div><div id="sidebar">
+<a class="visible-phone" href="#">
+    <i class="icon icon-list"></i>Menu</a>
+<ul>
+    <li>
+        <a href="dashboard.php">
+            <i class="icon icon-dashboard"></i>
+            <span>Dashboard</span>
+        </a>
+    </li>
+<li>
+        <a href="received_msg.php">
+            <i class="icon icon-inbox"></i>
+            <span>Recieved</span>
+        </a>
+    </li>
+  <?php 
+  
+  $acid=$user_id;
+
+  $uaccess = $contact->getData("SELECT * FROM access_right where user_id =$acid ;");
+  $pid=$uaccess[0]['prevelage_id'];
+  $paccess = $contact->getData("SELECT * FROM prevelage where id =$pid ;");
+  $accss=$paccess[0]['access_right'];
+
+  ?>  <!-- <li><a href="index.php"><i class="icon icon-envelope"></i><span>SMS</span></a></li> -->
+  <?php 
+    if(strcmp($accss,"SEND") == 0){
+        ?>      <li>
+        <a href="index.php">
+            <i class="icon icon-envelope"></i>
+            <span>SMS</span>
+        </a>
+    </li>
+    <li>
+        <a href="otp.php">
+            <i class="icon icon-text-height"></i>
+            <span>OTP</span>
+        </a>
+    </li>
+    <?php }    
+    if(strcmp($accss,"READ") == 0){
+        ?>
+    <li>
+        <a href="receive.php">
+            <i class="icon icon-inbox"></i>
+            <span>Received SMS</span>
+        </a>
+    </li><?php }?>
+    
+  <?php 
+    if(strcmp($accss,"WRITE") == 0){
+        ?>        <li>
+            <a href="customer.php">
+                <i class="icon icon-group"></i>
+                <span title="Customer Relation Management">CRM</span>
+            </a>
+        </li>
+        <li>
+            <a href="driver.php">
+                <i class="icon icon-group"></i>
+                <span title="Driver ">Driver</span>
+            </a>
+        </li>
+    <li>
+        <a href="message.php">
+            <i class="icon icon-list"></i>
+            <span>Message</span>
+        </a>
+    </li>
+    <li>
+        <a href="otp.php">
+            <i class="icon icon-text-height"></i>
+            <span>OTP</span>
+        </a>
+    </li>
+
+    <?php
+}if(strcmp($accss,"ADMIN") == 0){
+    ?>
+        <li>
+            <a href="broadcast.php" title="Broadcast Message">
+                <i class="icon icon-twitter"></i>
+                <span>Broadcast</span>
+            </a>
+        </li>
+        <li>
+            <a href="access_right.php">
+                <i class="icon icon-key"></i>
+                <span title="Access right">Access Right</span>
+            </a>
+        </li> <li>
+            <a href="message.php">
+                <i class="icon icon-list"></i>
+                <span>Message</span>
+            </a>
+        </li>
+        <li>
+            <a href="otp.php">
+                <i class="icon icon-text-height"></i>
+                <span>OTP</span>
+            </a>
+        </li>  <?php 
+    }
+      if(strcmp($accss,"APPROVE") == 0){
+        ?>
+        <li>
+            <a href="broadcast.php" title="Broadcast Message">
+                <i class="icon icon-twitter"></i>
+                <span>Broadcast</span>
+            </a>
+        </li>
+        <li>
+            <a href="user.php">
+                <i class="icon icon-group"></i>
+                <span title="User">User</span>
+            </a>
+        </li>
+        <li>
+            <a href="approval_request.php">
+                <i class="icon icon-check"></i>
+                <span title="Approval Request">Approve</span>
+            </a>
+        </li> <li>
+            <a href="message.php">
+                <i class="icon icon-list"></i>
+                <span>Message</span>
+            </a>
+        </li>
+        <li>
+            <a href="otp.php">
+                <i class="icon icon-text-height"></i>
+                <span>OTP</span>
+            </a>
+        </li>  <?php
+}else
+{
+
+    ?>
+
+        <li>
+            <a href="request.php">
+                <i class="icon icon-ok"></i>
+                <span title="Approval Request">Approval Request</span>
+            </a>
+        </li>
+    <?php
+}
+?>
+
+
+</ul></div><!--close-left-menu-stats-sidebar-->
